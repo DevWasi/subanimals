@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">subanimals</string>
+    <string name="facebook_app_id">3158416424276197</string>
+    <string name="fb_login_protocol_scheme">fb3158416424276197</string>
+</resources>
