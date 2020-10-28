@@ -1,6 +1,6 @@
 
 //REQUEST
-const BASE    =   'http://192.168.1.3:4000/api/v1';
+const BASE    =   'http://aadc32ad063a.ngrok.io/api/v1';
 const HEADERS =   {'Content-Type': 'application/json; charset=UTF-8'};
 
 
