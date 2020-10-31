@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:subanimals/utils/routes.dart';
-import 'package:subanimals/screens/language/language_screen.dart';
+import 'package:subanimals/routes.dart';
+import 'package:subanimals/screens/auth/auth_screen.dart';
+
 
 void main() {
   SharedPreferences.setMockInitialValues({});
@@ -21,7 +22,7 @@ class _MyAppState extends State<MyApp> {
       title: "Sub Animals",
       debugShowCheckedModeBanner: false,
       theme: _buildDarkTheme(),
-      home: Languages(),
+      home: AuthScreen('signUp'),
       routes: routes()
     );
   }

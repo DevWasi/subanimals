@@ -5,11 +5,10 @@ const HEADERS =   {'Content-Type': 'application/json; charset=UTF-8'};
 
 
 //ROUTEs
-const screenHome        =   '/home';
-const screenSignUp      =   '/signup';
-const screenSignIn      =   '/signin';
-const screenSettings    =   '/settings';
-
+const screenHome            =   '/home';
+const screenSignUp          =   '/signUp';
+const screenSignIn          =   '/signIn';
+const screenSettings        =   '/settings';
 
 //GOOGLE_CLIENT_ID
 const GOOGLE_CLIENT_ID =

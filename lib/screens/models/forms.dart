@@ -1,60 +1,103 @@
 import 'package:flutter/material.dart';
 
 import 'package:subanimals/utils/manager.dart';
-import 'package:subanimals/screens/common/common.dart';
-
-
-getActions(entity) {
-  List actions;
-  switch (entity) {
-    case "signup":
-      actions = [
-        {"name": "signup", "type": "submit"}
-      ];
-      break;
-    case "signin":
-      actions = [
-        {"name": "signin", "type": "submit"}
-      ];
-      break;
-  }
-
-  return actions;
-}
+import 'package:subanimals/screens/auth/auth_screen.dart';
+import 'package:subanimals/common/validator.dart';
+import 'package:subanimals/screens/auth/login/model.dart';
 
 getModel(entity) {
-  List model;
-  switch (entity) {
-    case 'signup':
-      model = [
-        {"attribute": "email", "label": "Email", "type": "text",
-          "cursor_color": Colors.white, "icon": Icons.email},
-        {"attribute": "password", "label": "Password", "type": "password",
-        "cursor_color": Colors.white, "icon": Icons.lock}
-      ];
-      break;
-    case 'signin':
-      model = [
-        {"attribute": "email", "label": "Email", "type": "text",
-        "cursor_color": Colors.white, "icon": Icons.email},
-        {"attribute": "password", "label": "Password", "type": "password",
-        "cursor_color": Colors.white, "icon": Icons.lock}
-      ];
-      break;
-  }
-
-  return model;
+  Map model = {
+    "signIn": {
+      "entities": [
+        {
+          "attribute": "email",
+          "label": "Email",
+          "type": "text",
+          "cursor_color": Colors.white,
+          "icon": Icons.email,
+          "text_color": TextStyle(color: Colors.white70),
+          "initial_value": "wasibiit@gmail.com",
+          "border": UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
+          ),
+        },
+        {
+          "attribute": "password",
+          "label": "Password",
+          "type": "password",
+          "cursor_color": Colors.white,
+          "icon": Icons.lock,
+          "text_color": TextStyle(color: Colors.white70),
+          "initial_value": "123456",
+          "border": UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white70)),
+        }
+      ],
+      "actions": [
+        {
+          "name": "signIn",
+          "type": "submit",
+          "color": Colors.white70,
+          "text_style": TextStyle(fontSize: 15),
+          "alignment": Alignment.center,
+          "padding": EdgeInsets.symmetric(vertical: 15.0, horizontal: 50.0),
+          "shape":
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.0))
+        }
+      ]
+    },
+    "signUp": {
+      "entities": [
+        {
+          "attribute": "email",
+          "label": "Email",
+          "type": "text",
+          "cursor_color": Colors.white,
+          "icon": Icons.email,
+          "text_color": TextStyle(color: Colors.white70),
+          "initial_value": "wasibiit@gmail.com",
+          "border": UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
+          ),
+        },
+        {
+          "attribute": "password",
+          "label": "Password",
+          "type": "password",
+          "cursor_color": Colors.white,
+          "icon": Icons.lock,
+          "text_color": TextStyle(color: Colors.white70),
+          "initial_value": "123456",
+          "border": UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white70)),
+        }
+      ],
+      "actions": [
+        {
+          "name": "signUp",
+          "type": "submit",
+          "color": Colors.white70,
+          "text_style": TextStyle(fontSize: 15),
+          "alignment": Alignment.center,
+          "padding": EdgeInsets.symmetric(vertical: 15.0, horizontal: 50.0),
+          "shape":
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.0))
+        }
+      ]
+    }
+  };
+  return model[entity];
 }
 
 getFields(entity, formskey, context, scaffoldKey) {
-  List model = getModel(entity);
-  List actions = getActions(entity);
+  Map model = getModel(entity);
+  List actions = model["actions"];
   List<Widget> fields = [];
-  model.forEach((attribute) {
-    switch (attribute['type']) {
-      case 'password': fields.add(passwordField(attribute));
+  model["entities"].forEach((entity) {
+    switch (entity['type']) {
+      case 'password': fields.add(passwordField(entity));
         break;
-      default: fields.add(textField(attribute));
+      default: fields.add(textField(entity));
       break;
     }
     fields.add(SizedBox(height: 30.0));
@@ -67,7 +110,7 @@ getFields(entity, formskey, context, scaffoldKey) {
 
 passwordField(attribute){
   return TextFormField(
-    textInputAction: TextInputAction.done,
+    textInputAction: attribute['input_action'],
     validator: (value) {
       return validateString(attribute['label'], value);
     },
@@ -77,20 +120,20 @@ passwordField(attribute){
     },
     cursorColor: attribute['cursor_color'],
     obscureText: true,
-    style: TextStyle(color: Colors.white70),
+    style: attribute['text_color'],
+    initialValue: attribute['initial_value'],
     decoration: InputDecoration(
-      icon: Icon(attribute['icon']),
-      hintText: attribute['label'],
-      border:
-      UnderlineInputBorder(borderSide: BorderSide(color: Colors.white70)),
-      hintStyle: TextStyle(color: Colors.white70),
+        icon: Icon(attribute['icon']),
+        border: attribute['border'],
+        labelStyle: attribute['text_color'],
+        labelText: attribute['label']
     ),
   );
 }
 
 textField(attribute){
   return TextFormField(
-    textInputAction: TextInputAction.done,
+    textInputAction: attribute['input_action'],
     validator: (value) {
       String text;
       if(value.isNotEmpty){
@@ -105,44 +148,28 @@ textField(attribute){
       _prefs.setItem(attribute['label'], value);
     },
     cursorColor: attribute['cursor_color'],
-    style: TextStyle(color: Colors.white70),
+    style: attribute['text_color'],
+    initialValue: attribute['initial_value'],
     decoration: InputDecoration(
-      icon: Icon(attribute['icon']),
-      hintText: attribute['label'],
-      border:
-      UnderlineInputBorder(borderSide: BorderSide(color: Colors.white70)),
-      hintStyle: TextStyle(color: Colors.white70),
+        icon: Icon(attribute['icon']),
+        border: attribute['border'],
+        labelStyle: attribute['text_color'],
+        labelText: attribute['label']
     ),
   );
 }
 
-formButton(action, entity, formskey, context, scaffoldKey) {
-  AuthPageState _instance = AuthPageState();
+formButton(action, entity, formkey, context, scaffoldKey) {
   return Container(
-    alignment: Alignment.center,
-    child: FlatButton(
-      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-      color: Colors.white70,
-      child: new Text(action['name'].toUpperCase(), style: TextStyle(fontSize: 15 )),
-      onPressed: () {_instance.submitForm(entity, formskey, context, scaffoldKey);}
+    alignment: action['alignment'],
+    child: RaisedButton(
+        shape: action['shape'],
+        padding: action['padding'],
+        color: action['color'],
+        child: Text(action['name'].toUpperCase(), style: action['text_style']),
+        onPressed: () {
+          model["instance"].submitForm(entity, formkey, context, scaffoldKey);
+        }
     ),
   );
-}
-
-String validateString(String key, String value) {
-  if (value.isEmpty) {
-
-    return key + ' Is Required';
-  } else if (key == 'Email' &&
-      !RegExp(r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
-          .hasMatch(value)) {
-
-    return 'Please Enter A Valid Email';
-  } else if(key == 'Password' && value.length < 6) {
-
-    return 'Password must be 6 digit long';
-  } else {
-
-    return null;
-  }
 }

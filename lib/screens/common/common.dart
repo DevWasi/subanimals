@@ -13,12 +13,12 @@ import 'package:subanimals/screens/auth/facebookauth/facebook_login.dart';
 Widget appBar(String name, dynamic context) {
   String text;
   switch(name) {
-    case 'signin' : text = 'signup'.toUpperCase();
+    case 'signIn' : text = 'signUp'.toUpperCase();
     break;
-    case 'signup' : text = 'signin'.toUpperCase();
+    case 'signUp' : text = 'signIn'.toUpperCase();
   }
   return AppBar(
-    actions: <Widget>[
+    actions: [
       Container(
         padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
         child: RaisedButton(
@@ -26,9 +26,9 @@ Widget appBar(String name, dynamic context) {
           child: Text(text),
           onPressed: () {
             switch (name) {
-              case 'signin': Navigator.popAndPushNamed(context, screenSignUp);
+              case 'signIn': Navigator.popAndPushNamed(context, screenSignUp);
               break;
-              case 'signup': Navigator.popAndPushNamed(context, screenSignIn);
+              case 'signUp': Navigator.popAndPushNamed(context, screenSignIn);
             }
 
           },
@@ -70,12 +70,12 @@ Future<dynamic> createMap(String key) async {
   map['device_type'] = 'android';
   map['device_id'] = 'DeviceTokenGeneratedViaFMC';
   switch(key) {
-    case "signup":
+    case "signUp":
       map['username'] = _prefs.getItem("Email");
       map['password'] = _prefs.getItem("Password");
       user["customer"] = map;
       break;
-    case "signin":
+    case "signIn":
       map['username'] = _prefs.getItem("Email");
       map['password'] = _prefs.getItem("Password");
       map['app'] = 'customer';
@@ -89,143 +89,4 @@ Future<dynamic> createMap(String key) async {
   }
 
   return user;
-}
-
-class AuthPage extends StatefulWidget {
-  final String name;
-  AuthPage(this.name);
-
-  @override
-  AuthPageState createState() => AuthPageState();
-
-}
-
-class AuthPageState extends State<AuthPage> {
-  RequestHandler _client = RequestHandler();
-  GlobalKey<FormState> formKey =  new GlobalKey();
-  final GlobalKey<ScaffoldState> scaffoldKey = new GlobalKey<ScaffoldState>();
-
-  @override
-  Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light
-        .copyWith(statusBarColor: Colors.transparent));
-    return Scaffold(
-      appBar: appBar(widget.name, context),
-      key: scaffoldKey,
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-              colors: [Colors.grey[800], Colors.grey[900]],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter),
-        ),
-        child: ListView(
-          children: <Widget>[
-            headerSection(widget.name.toUpperCase()),
-            SizedBox(height: 30.0),
-            getForm(widget.name, formKey, context, scaffoldKey),
-            SizedBox(height: 30.0),
-            _buildFacebookButton(),
-            SizedBox(height: 30.0),
-            _buildGoogleButton()
-          ],
-        ),
-      ),
-    );
-  }
-
-  Form getForm(entity, formKey, context, scaffoldKey) {
-    return Form(
-      key: formKey,
-      child: Column(
-          children: getFields(entity, formKey, context, scaffoldKey)
-      ),
-    );
-  }
-
-  Widget _buildFacebookButton() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: 40.0,
-      padding: EdgeInsets.symmetric(horizontal: 15.0),
-      margin: EdgeInsets.only(top: 15.0),
-      child: RaisedButton.icon(
-        color: Colors.indigoAccent,
-        onPressed: () async {
-          final _prefs = await PreferenceManager.getInstance();
-          dynamic token = await signUpWithFacebook();
-          if (_prefs.getItem("token") == token) {
-            Navigator.popAndPushNamed(context, screenHome);
-          } else if (_prefs.getItem("token") != token) {
-            scaffoldKey.currentState
-                .showSnackBar(buidSnackBar("LOGIN FAILED"));
-          }
-        },
-        icon: Icon(
-          FontAwesomeIcons.facebookF,
-          size: 30.0,
-        ),
-        label: Text("SIGN UP WITH FACEBOOK"),
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18.0),
-            side: BorderSide(color: Colors.black)),
-      ),
-    );
-  }
-
-  Widget _buildGoogleButton() {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: 40.0,
-      padding: EdgeInsets.symmetric(horizontal: 15.0),
-      margin: EdgeInsets.only(top: 15.0),
-      child: RaisedButton.icon(
-        color: Colors.white,
-        onPressed: () {signIn();},
-        icon: Icon(
-          FontAwesomeIcons.googlePlusG,
-          size: 30.0,
-        ),
-        label: Text("SIGN UP WITH GOOGLE"),
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18.0),
-            side: BorderSide(color: Colors.black)),
-      ),
-    );
-  }
-
-  submitForm(entity, formskey, context, scaffoldKey) async {
-    if (formskey.currentState.validate()) {
-      formskey.currentState.save();
-      dynamic body = await createMap(entity);
-      String path;
-      switch (entity) {
-        case 'signin': path = '/auth/attempt';
-        break;
-        case 'signup': path = '/customers';
-        break;
-      }
-      _client.post(path, body: body).then((value) {
-        switch(entity) {
-          case 'signin':
-            switch(value) {
-              case '200': Navigator.popAndPushNamed(context, screenHome);
-              break;
-              case '400': scaffoldKey.currentState
-                  .showSnackBar(buidSnackBar(entity));
-              break;
-            }
-            break;
-          case 'signup':
-            switch(value) {
-              case '200':Navigator.popAndPushNamed(context, screenHome);
-              break;
-              case '422': scaffoldKey.currentState
-                  .showSnackBar(buidSnackBar(entity));
-            }
-            break;
-        }
-      });
-    }
-  }
 }
