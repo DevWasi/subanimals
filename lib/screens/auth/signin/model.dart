@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:subanimals/screens/auth/auth_screen.dart';
 
 Map model = {
   "entities": [
@@ -27,8 +26,8 @@ Map model = {
           borderSide: BorderSide(color: Colors.white70)),
     }
   ],
-  "instance": AuthScreenState(),
   "entity": "login",
+  "name": "Login",
   "actions": [
     {
       "name": "signIn",

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:subanimals/common/validator.dart';
+import 'package:subanimals/formBuilder/validator.dart';
+import 'package:subanimals/common/commonController.dart';
 
 import 'package:subanimals/utils/manager.dart';
 
-getFields(entity, formskey, context, scaffoldKey) {
-  List actions = model["actions"];
-  String abc = 'abc ' + 'xyz ' + 'abc';
+getFields(model, formskey, context, scaffoldKey) {
   List<Widget> fields = [];
   model["entities"].forEach((entity) {
     switch (entity['type']) {
@@ -16,42 +15,42 @@ getFields(entity, formskey, context, scaffoldKey) {
     }
     fields.add(SizedBox(height: 30.0));
   });
-  actions.forEach((action) {
-    fields.add(formButton(action, entity, formskey, context, scaffoldKey));
+  model["actions"].forEach((action) {
+    fields.add(formButton(action, formskey, context, scaffoldKey));
   });
   return fields;
 }
 
-passwordField(attribute){
+passwordField(entity){
   return TextFormField(
-    textInputAction: attribute['input_action'],
+    textInputAction: entity['input_action'],
     validator: (value) {
-      return validateString(attribute['label'], value);
+      return validateString(entity['label'], value);
     },
     onSaved: (value) async {
       final _prefs = await PreferenceManager.getInstance();
-      _prefs.setItem(attribute['label'], value);
+      _prefs.setItem(entity['label'], value);
     },
-    cursorColor: attribute['cursor_color'],
+    cursorColor: entity['cursor_color'],
     obscureText: true,
-    style: attribute['text_color'],
-    initialValue: attribute['initial_value'],
+    style: entity['text_color'],
+    initialValue: entity['initial_value'],
     decoration: InputDecoration(
-        icon: Icon(attribute['icon']),
-        border: attribute['border'],
-        labelStyle: attribute['text_color'],
-        labelText: attribute['label']
+        icon: Icon(entity['icon']),
+        border: entity['border'],
+        labelStyle: entity['text_color'],
+        labelText: entity['label']
     ),
   );
 }
 
-textField(attribute){
+textField(entity){
   return TextFormField(
-    textInputAction: attribute['input_action'],
+    textInputAction: entity['input_action'],
     validator: (value) {
       String text;
       if(value.isNotEmpty){
-        text = validateString(attribute['label'], value);
+        text = validateString(entity['label'], value);
       }else if(value.isEmpty) {
         text = 'All Fields Are Required';
       }
@@ -59,21 +58,21 @@ textField(attribute){
     },
     onSaved: (value) async {
       final _prefs = await PreferenceManager.getInstance();
-      _prefs.setItem(attribute['label'], value);
+      _prefs.setItem(entity['label'], value);
     },
-    cursorColor: attribute['cursor_color'],
-    style: attribute['text_color'],
-    initialValue: attribute['initial_value'],
+    cursorColor: entity['cursor_color'],
+    style: entity['text_color'],
+    initialValue: entity['initial_value'],
     decoration: InputDecoration(
-        icon: Icon(attribute['icon']),
-        border: attribute['border'],
-        labelStyle: attribute['text_color'],
-        labelText: attribute['label']
+        icon: Icon(entity['icon']),
+        border: entity['border'],
+        labelStyle: entity['text_color'],
+        labelText: entity['label']
     ),
   );
 }
 
-formButton(action, entity, formkey, context, scaffoldKey) {
+formButton(action, formkey, context, scaffoldKey) {
   return Container(
     alignment: action['alignment'],
     child: RaisedButton(
@@ -82,7 +81,7 @@ formButton(action, entity, formkey, context, scaffoldKey) {
         color: action['color'],
         child: Text(action['name'].toUpperCase(), style: action['text_style']),
         onPressed: () {
-          model["instance"].submitForm(entity, formkey, context, scaffoldKey);
+          CommonController({}).submitForm(action['name'], formkey, context, scaffoldKey);
         }
     ),
   );
