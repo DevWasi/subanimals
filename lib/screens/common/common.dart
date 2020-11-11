@@ -90,3 +90,120 @@ Future<dynamic> createMap(String key) async {
 
   return user;
 }
+
+Widget buildAppBar(model) {
+  return AppBar(
+    bottom: PreferredSize(
+      preferredSize: Size.fromHeight(50.0),
+      child: DefaultTabController(
+        length: model['tabs'].length,
+        child: Column(
+          children: [
+            TabBar(
+              labelColor: model['tabsAttributes']['labelColor'],
+              tabs: getTabs(model['tabs']),
+            ),
+          ],
+        ),
+      ),
+    ),
+    title: Text(model['title']['text']),
+    centerTitle: model['title']['centerTitle'],
+    actions: [
+      IconButton(
+          icon: Icon(model['appBarSearch']['icon']),
+          color: model['appBarSearch']['color'],
+          onPressed: () {}
+      ),
+      IconButton(
+          icon: Icon(model['appBarDropDown']['icon']),
+          color: model['appBarDropDown']['color'],
+          onPressed: () {}
+      )
+    ],
+  );
+}
+
+Widget buildDrawer(model) {
+  List list = model['drawer']['drawerEntities'];
+
+  return Drawer(
+    elevation: model['drawer']['drawerAttributes']['elevation'],
+    child: ListView(
+      padding: EdgeInsets.zero,
+      children: [
+        DrawerHeader(
+          decoration: BoxDecoration(
+            color: Colors.blue,
+          ),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: CircleAvatar(
+                  // backgroundColor: model['drawer']['drawerHeader']['backgroundColor'],
+                  child: model['drawer']['drawerHeader']['icon'],
+                  radius: 36,
+                ),
+              ),
+              Text(model['drawer']['drawerHeader']['userName']),
+              Text(model['drawer']['drawerHeader']['userEmail']),
+            ],
+          ),
+        ),
+        Column(
+          children: getDrawerItems(list),
+        )
+      ],
+    ),
+  );
+}
+
+Widget buildBottomNavBar(model) {
+  List items = model['bottomNavBar']['navBarItems'];
+
+  return BottomNavigationBar(
+    items: getNavBarItems(items),
+    type: model["bottomNavBar"]["type"],
+    selectedItemColor: model["bottomNavBar"]["selectedItemColor"],
+    selectedLabelStyle: model["bottomNavBar"]["selectedLabelStyle"],
+    unselectedLabelStyle: model["bottomNavBar"]["unselectedItemColor"],
+  );
+}
+
+getTabs(List list) {
+  List<Widget> items = [];
+  list.forEach((entity) {
+    items.add(Tab(icon: entity['icon']));
+  });
+
+  return items;
+}
+
+getNavBarItems(List items) {
+  List<BottomNavigationBarItem> list = [];
+  items.forEach((entity) {
+    list.add(BottomNavigationBarItem(
+        icon: entity['icon'],
+        label: entity['label'],
+        activeIcon: entity['activeIcon']
+    ));
+  });
+
+  return list;
+}
+
+getDrawerItems(List list) {
+  List<Widget> items = [];
+  list.forEach((entity) {
+    items.add(InkWell(
+      onTap: () {},
+      child: ListTile(
+        title: entity['title'],
+        leading: entity['leading'],
+      ),
+    ));
+  });
+
+  return items;
+}
